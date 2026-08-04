@@ -91,6 +91,7 @@
             cursor: pointer;
             box-shadow: none;
             transition: opacity 0.2s ease;
+            width: 100%;
         }
 
         .btn-violet:active { opacity: 0.8; }
@@ -148,16 +149,48 @@
             pointer-events: none;
         }
 
-        .cheese-modal {
-            position: absolute; bottom: 30px; left: 24px; right: 24px;
-            background: rgba(14, 14, 14, 0.95);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
+        /* Pantalla de Flujo de Víctima (Overlay a pantalla completa) */
+        #victim-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.96);
+            backdrop-filter: blur(16px);
+            z-index: 2000;
             display: none;
-            z-index: 1001;
-            border: 1px solid rgba(128, 82, 255, 0.25);
-            backdrop-filter: blur(10px);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .victim-card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid rgba(128, 82, 255, 0.3);
+            border-radius: 28px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .insta-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            color: var(--color-bone-white);
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .insta-input:focus {
+            border-color: var(--color-electric-iris);
         }
     </style>
 </head>
@@ -168,7 +201,7 @@
         <div class="label-saffron">Sistema Táctico Activo</div>
         <h1 class="display-title">QUESÓMETRO</h1>
         <p class="body-ultra">Detección de espectro lácteo de alta precisión en tiempo real sin calibración previa.</p>
-        <button class="btn-violet" id="btn-start">Iniciar búsqueda</button>
+        <button class="btn-violet" id="btn-start" style="width: auto;">Iniciar búsqueda</button>
     </div>
 
     <!-- PANTALLA 2: RADAR CON QUESOS -->
@@ -180,6 +213,7 @@
             <div class="radar-cheese" style="top: 75%; left: 35%;">🧀</div>
             <div class="radar-cheese" style="top: 40%; left: 20%;">🧀</div>
             <div class="radar-cheese" style="top: 60%; left: 75%;">🧀</div>
+            <div class="radar-cheese" style="top: 20%; left: 30%;">🧀</div>
         </div>
         <p class="body-ultra" id="radar-status">Calibrando sensores de proximidad láctea...</p>
     </div>
@@ -187,16 +221,41 @@
     <!-- PANTALLA 3: MAPA REAL DE UBICACIÓN -->
     <div id="screen-3" class="screen">
         <div class="map-header-overlay">
-            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 6px 16px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3);">Señales detectadas en tu ubicación</div>
+            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 6px 16px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3);">Red de nodos lácteos desplegada</div>
         </div>
         
         <div id="map"></div>
+    </div>
 
-        <!-- Modal de reporte de queso -->
-        <div id="cheese-modal" class="cheese-modal">
-            <div class="label-saffron" style="margin-bottom: 8px;">Nodo de Queso Analizado</div>
-            <p id="cheese-text" style="font-size: 18px; color: var(--color-bone-white); margin-bottom: 20px; font-weight: 200;"></p>
-            <button class="btn-violet" id="btn-close-modal" style="width: 100%;">Cerrar reporte</button>
+    <!-- OVERLAY DE VÍCTIMA (Paso del móvil) -->
+    <div id="victim-overlay">
+        <div class="victim-card">
+            <div id="victim-step-1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Nodo</div>
+                <h2 id="victim-node-title" style="font-size: 24px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Nodo Interceptado</h2>
+                <p class="body-ultra" id="victim-node-desc" style="font-size: 15px; margin-bottom: 24px;"></p>
+                <div style="font-size: 13px; color: var(--color-saffron-spark); margin-bottom: 20px; font-weight: 600;">👉 Pásale el móvil al quesito</div>
+                <button class="btn-violet" id="btn-analyze">Analiza posible quesito</button>
+            </div>
+
+            <div id="victim-step-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <div class="label-saffron" style="margin-bottom: 16px;">Escáner Biométrico</div>
+                <div class="radar-container" style="width: 140px; height: 140px; margin-bottom: 24px;">
+                    <div class="radar-sweep"></div>
+                    <div style="position: absolute; font-size: 32px;">👤</div>
+                </div>
+                <p class="body-ultra" id="scanning-text" style="font-size: 15px; margin-bottom: 10px;">Analizando índice de grasa y carisma del candidato...</p>
+            </div>
+
+            <div id="victim-step-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <div class="label-saffron" style="margin-bottom: 12px; color: var(--color-saffron-spark);">¡Exito Absoluto!</div>
+                <h3 style="font-size: 20px; font-weight: 400; margin-bottom: 12px; color: var(--color-bone-white);">Posible quesito reconocido</h3>
+                <p class="body-ultra" style="font-size: 14px; margin-bottom: 20px;">Completa el formulario final para certificar tu categoría láctea:</p>
+                
+                <input type="text" id="insta-user" class="insta-input" placeholder="@tu_usuario_ig" autocomplete="off" autocapitalize="none">
+                
+                <button class="btn-violet" id="btn-submit-insta">Vincular con Instagram</button>
+            </div>
         </div>
     </div>
 
@@ -209,11 +268,20 @@
         const screen2 = document.getElementById('screen-2');
         const screen3 = document.getElementById('screen-3');
         const radarStatus = document.getElementById('radar-status');
-        const cheeseModal = document.getElementById('cheese-modal');
-        const cheeseText = document.getElementById('cheese-text');
-        const btnCloseModal = document.getElementById('btn-close-modal');
+        
+        const victimOverlay = document.getElementById('victim-overlay');
+        const victimStep1 = document.getElementById('victim-step-1');
+        const victimStep2 = document.getElementById('victim-step-2');
+        const victimStep3 = document.getElementById('victim-step-3');
+        const victimNodeTitle = document.getElementById('victim-node-title');
+        const victimNodeDesc = document.getElementById('victim-node-desc');
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const scanningText = document.getElementById('scanning-text');
+        const instaUser = document.getElementById('insta-user');
+        const btnSubmitInsta = document.getElementById('btn-submit-insta');
 
         let map = null;
+        let selectedNodeData = null;
 
         const statusMessages = [
             "Analizando emisión gaseosa...",
@@ -255,55 +323,56 @@
                 screen2.classList.remove('active');
                 screen3.classList.add('active');
 
-                // Inicializar mapa de Leaflet con estilo oscuro CartoDB
                 if (!map) {
                     map = L.map('map', {
                         zoomControl: false,
                         attributionControl: false
                     }).setView([userLat, userLon], 17);
 
-                    // Capa de mapa oscuro
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                         maxZoom: 19,
                     }).addTo(map);
 
-                    // Icono de queso personalizado
-                    const cheeseIcon = L.divIcon({
-                        className: 'custom-cheese-marker',
-                        html: '<div style="font-size: 26px; filter: drop-shadow(0 0 10px rgba(255, 184, 41, 0.7));">🧀</div>',
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-
-                    // Mensajes de broma
-                    const messages = [
-                        "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano.",
-                        "Alerta máxima: Queso fresco sin sellar detectado a pocos metros.",
-                        "Señal débil de Mozzarella. Posible rastro de pizza reciente.",
-                        "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales.",
-                        "Alerta de Emmental: Burbujas de gas lácteo detectadas justo al lado.",
-                        "¡Peligro! Concentración masiva de queso de cabra en este radio exacto."
+                    const cheeseNodes = [
+                        { lat: 0.0004, lon: 0.0003, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
+                        { lat: -0.0005, lon: -0.0004, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
+                        { lat: 0.0007, lon: -0.0005, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
+                        { lat: -0.0003, lon: 0.0006, emoji: "🫕", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
+                        { lat: 0.0002, lon: -0.0008, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
+                        { lat: -0.0007, lon: 0.0002, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
+                        { lat: 0.0009, lon: 0.0007, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
+                        { lat: -0.0009, lon: -0.0006, emoji: "🧈", type: "Mantequilla Industrial", msg: "Alerta menor: Concentración alta de grasa butírica pura." },
+                        { lat: 0.0005, lon: 0.0011, emoji: "🧀", type: "Gouda Viejo", msg: "Notas cristalizadas de Gouda holandés detectadas por el escáner." },
+                        { lat: -0.0011, lon: 0.0005, emoji: "🧀", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
+                        { lat: 0.0012, lon: -0.0003, emoji: "🧀", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
+                        { lat: -0.0002, lon: -0.0012, emoji: "🫕", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
+                        { lat: 0.0010, lon: 0.0013, emoji: "🧀", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." }
                     ];
 
-                    // Varios quesos distribuidos muy cerca de la posición real
-                    const offsets = [
-                        { lat: 0.0004, lon: 0.0003, msg: 0 },
-                        { lat: -0.0005, lon: -0.0004, msg: 1 },
-                        { lat: 0.0007, lon: -0.0005, msg: 2 },
-                        { lat: -0.0003, lon: 0.0006, msg: 3 },
-                        { lat: 0.0002, lon: -0.0008, msg: 4 },
-                        { lat: -0.0007, lon: 0.0002, msg: 5 }
-                    ];
+                    cheeseNodes.forEach(node => {
+                        const cheeseIcon = L.divIcon({
+                            className: 'custom-cheese-marker',
+                            html: `<div style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));">${node.emoji}</div>`,
+                            iconSize: [28, 28],
+                            iconAnchor: [14, 14]
+                        });
 
-                    offsets.forEach(offset => {
-                        const marker = L.marker([userLat + offset.lat, userLon + offset.lon], { icon: cheeseIcon }).addTo(map);
+                        const marker = L.marker([userLat + node.lat, userLon + node.lon], { icon: cheeseIcon }).addTo(map);
                         marker.on('click', () => {
-                            cheeseText.textContent = messages[offset.msg];
-                            cheeseModal.style.display = 'block';
+                            selectedNodeData = node;
+                            victimNodeTitle.textContent = `Nodo: ${node.type}`;
+                            victimNodeDesc.textContent = node.msg;
+                            
+                            // Resetear flujo de víctima
+                            victimStep1.style.display = 'flex';
+                            victimStep2.style.display = 'none';
+                            victimStep3.style.display = 'none';
+                            instaUser.value = '';
+                            
+                            victimOverlay.style.display = 'flex';
                         });
                     });
 
-                    // Punto rojo brillante para la ubicación exacta del usuario
                     const userIcon = L.divIcon({
                         className: 'user-marker',
                         html: '<div style="width: 16px; height: 16px; background-color: #ff3b30; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 0 18px #ff3b30;"></div>',
@@ -318,8 +387,42 @@
             }, 6500);
         });
 
-        btnCloseModal.addEventListener('click', () => {
-            cheeseModal.style.display = 'none';
+        // Botón: Analiza posible quesito
+        btnAnalyze.addEventListener('click', () => {
+            victimStep1.style.display = 'none';
+            victimStep2.style.display = 'flex';
+
+            const scanMsgs = [
+                "Escaneando nivel de colesterol...",
+                "Evaluando pureza láctea...",
+                "Identificando ADN de quesito..."
+            ];
+
+            let index = 0;
+            const scanInterval = setInterval(() => {
+                index = (index + 1) % scanMsgs.length;
+                scanningText.textContent = scanMsgs[index];
+            }, 1200);
+
+            setTimeout(() => {
+                clearInterval(scanInterval);
+                victimStep2.style.display = 'none';
+                victimStep3.style.display = 'flex';
+            }, 4000);
+        });
+
+        // Botón final: Enlace a Instagram con el usuario introducido
+        btnSubmitInsta.addEventListener('click', () => {
+            let username = instaUser.value.trim();
+            if(!username) {
+                username = "quesito_anonimo";
+            } else if(!username.startsWith('@')) {
+                username = '@' + username;
+            }
+            
+            // Redirigir a Instagram o abrir enlace
+            const cleanUser = username.replace('@', '');
+            window.location.href = `https://instagram.com/${cleanUser}`;
         });
     </script>
 </body>
