@@ -1,0 +1,14 @@
+{
+  "name": "Quesómetro",
+  "short_name": "Quesómetro",
+  "display": "standalone",
+  "background_color": "#f7ca18",
+  "theme_color": "#f7ca18",
+  "icons": [
+    {
+      "src": "icono.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

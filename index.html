@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quesómetro</title>
+    
+    <!-- Etiquetas para que iOS lo trate como app nativa -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quesómetro">
+    <link rel="apple-touch-icon" href="icono.png">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; 
+            background-color: #f7ca18; /* Color amarillo queso */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none; -webkit-user-select: none; 
+        }
+        #app-container {
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; height: 100%; text-align: center;
+        }
+        button {
+            padding: 20px 40px; font-size: 24px; font-weight: bold;
+            border-radius: 50px; border: none; background-color: #333;
+            color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        h2 { font-size: 2rem; color: #333; }
+        p { font-size: 1.2rem; color: #333; padding: 0 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Pantalla 1: El cebo -->
+        <div id="pantalla-1">
+            <h1 style="font-size: 3.5rem; margin-bottom: 50px; color: #333;">🧀<br>Quesómetro</h1>
+            <button id="btn-buscar">Buscar en alrededores</button>
+        </div>
+
+        <!-- Pantalla 2: La carga -->
+        <div id="pantalla-2" style="display: none;">
+            <h2>Analizando el aire...</h2>
+            <p>(Calibrando sensores)</p>
+        </div>
+
+        <!-- Pantalla 3: El remate -->
+        <div id="pantalla-3" style="display: none;">
+            <h2>Resultados: 0</h2>
+            <p>Hueles a queso, pero no hay queso.</p>
+            <button id="btn-reiniciar" style="margin-top: 20px; font-size: 18px; background-color: #d9534f;">Reiniciar escáner</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-buscar').addEventListener('click', () => {
+            document.getElementById('pantalla-1').style.display = 'none';
+            document.getElementById('pantalla-2').style.display = 'block';
+
+            // Tarda 4 segundos en saltar la broma
+            setTimeout(() => {
+                document.getElementById('pantalla-2').style.display = 'none';
+                document.getElementById('pantalla-3').style.display = 'block';
+            }, 4000);
+        });
+
+        document.getElementById('btn-reiniciar').addEventListener('click', () => {
+            document.getElementById('pantalla-3').style.display = 'none';
+            document.getElementById('pantalla-1').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
