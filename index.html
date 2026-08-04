@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quesómetro</title>
     
-    <!-- Etiquetas para que iOS lo trate como app nativa -->
+    <!-- Etiquetas para iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Quesómetro">
     <link rel="apple-touch-icon" href="icono.png">
     <link rel="manifest" href="manifest.json">
+
+    <!-- Leaflet CSS para el mapa real -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
         :root {
@@ -45,7 +48,6 @@
 
         .screen.active { display: flex; }
         
-        /* Estilos Dala Guide */
         .label-saffron {
             font-size: 14px;
             font-weight: 600;
@@ -92,7 +94,7 @@
 
         .btn-violet:active { opacity: 0.8; }
 
-        /* Animación de Radar */
+        /* Animación de Radar con Quesos */
         .radar-container {
             position: relative;
             width: 260px; height: 260px;
@@ -110,12 +112,11 @@
             animation: spin 2s linear infinite;
         }
 
-        .radar-dot {
+        .radar-cheese {
             position: absolute;
-            width: 8px; height: 8px;
-            background-color: var(--color-saffron-spark);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--color-saffron-spark);
+            font-size: 18px;
+            animation: pulseCheese 1.5s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));
         }
 
         @keyframes spin {
@@ -123,57 +124,45 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Mapa Minimalista */
+        @keyframes pulseCheese {
+            from { transform: scale(0.8); opacity: 0.5; }
+            to { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Contenedor del Mapa Real */
         #screen-3 {
-            background: radial-gradient(circle at center, #111111 0%, #000000 100%);
+            padding: 0;
             position: relative;
         }
 
-        .map-grid {
-            position: absolute;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 40px 40px;
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-void);
         }
 
-        .map-header {
-            position: absolute; top: 40px; left: 0; right: 0;
-            text-align: center; z-index: 10;
+        .map-header-overlay {
+            position: absolute; top: 20px; left: 0; right: 0;
+            text-align: center; z-index: 1000;
             pointer-events: none;
-            padding: 0 20px;
-        }
-
-        .cheese-pin {
-            position: absolute;
-            font-size: 28px;
-            cursor: pointer;
-            animation: floatCheese 3s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 10px rgba(255, 184, 41, 0.5));
-            transform: translate(-50%, -50%);
-        }
-
-        @keyframes floatCheese {
-            from { transform: translate(-50%, -50%) translateY(0px); }
-            to { transform: translate(-50%, -50%) translateY(-6px); }
         }
 
         .cheese-modal {
-            position: absolute; bottom: 40px; left: 24px; right: 24px;
+            position: absolute; bottom: 30px; left: 24px; right: 24px;
             background: rgba(14, 14, 14, 0.95);
             border-radius: 24px;
             padding: 24px;
             text-align: center;
             display: none;
-            z-index: 20;
+            z-index: 1001;
             border: 1px solid rgba(128, 82, 255, 0.25);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA 1: INICIO ESTILO DALA -->
+    <!-- PANTALLA 1: INICIO -->
     <div id="screen-1" class="screen active">
         <div class="label-saffron">Sistema Táctico Activo</div>
         <h1 class="display-title">QUESÓMETRO</h1>
@@ -181,32 +170,27 @@
         <button class="btn-violet" id="btn-start">Iniciar búsqueda</button>
     </div>
 
-    <!-- PANTALLA 2: RADAR ESCANEANDO (6.5s) -->
+    <!-- PANTALLA 2: RADAR CON QUESOS -->
     <div id="screen-2" class="screen">
         <div class="label-saffron">Buscando frecuencias...</div>
         <div class="radar-container">
             <div class="radar-sweep"></div>
-            <div class="radar-dot" style="top: 25%; left: 70%;"></div>
-            <div class="radar-dot" style="top: 75%; left: 35%;"></div>
+            <div class="radar-cheese" style="top: 25%; left: 70%;">🧀</div>
+            <div class="radar-cheese" style="top: 75%; left: 35%;">🧀</div>
+            <div class="radar-cheese" style="top: 40%; left: 20%;">🧀</div>
         </div>
         <p class="body-ultra" id="radar-status">Calibrando sensores de proximidad láctea...</p>
     </div>
 
-    <!-- PANTALLA 3: MAPA MINIMALISTA CON QUESOS -->
+    <!-- PANTALLA 3: MAPA REAL DE UBICACIÓN -->
     <div id="screen-3" class="screen">
-        <div class="map-grid"></div>
-        <div class="map-header">
-            <div class="label-saffron">Señales detectadas en el área</div>
-            <p style="font-size: 14px; color: var(--color-ash-gray);">Toca un nodo activo para inspeccionar</p>
+        <div class="map-header-overlay">
+            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 6px 16px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3);">Señales detectadas en tu ubicación</div>
         </div>
+        
+        <div id="map"></div>
 
-        <!-- Pines de queso distribuidos -->
-        <div class="cheese-pin" style="top: 28%; left: 32%;" data-cheese="1">🧀</div>
-        <div class="cheese-pin" style="top: 62%; left: 72%;" data-cheese="2">🧀</div>
-        <div class="cheese-pin" style="top: 48%; left: 52%;" data-cheese="3">🧀</div>
-        <div class="cheese-pin" style="top: 72%; left: 24%;" data-cheese="4">🧀</div>
-
-        <!-- Modal de reporte -->
+        <!-- Modal de reporte de queso -->
         <div id="cheese-modal" class="cheese-modal">
             <div class="label-saffron" style="margin-bottom: 8px;">Nodo de Queso Analizado</div>
             <p id="cheese-text" style="font-size: 18px; color: var(--color-bone-white); margin-bottom: 20px; font-weight: 200;"></p>
@@ -214,20 +198,24 @@
         </div>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
         const btnStart = document.getElementById('btn-start');
         const screen1 = document.getElementById('screen-1');
         const screen2 = document.getElementById('screen-2');
         const screen3 = document.getElementById('screen-3');
         const radarStatus = document.getElementById('radar-status');
-        const cheesePins = document.querySelectorAll('.cheese-pin');
         const cheeseModal = document.getElementById('cheese-modal');
         const cheeseText = document.getElementById('cheese-text');
         const btnCloseModal = document.getElementById('btn-close-modal');
 
+        let map = null;
+
         const statusMessages = [
             "Analizando emisión gaseosa...",
-            "Triangulando coordenadas lácteas...",
+            "Triangulando coordenadas GPS...",
             "Detectando concentración de caseína...",
             "Filtro de lactosa completado..."
         ];
@@ -236,34 +224,91 @@
             screen1.classList.remove('active');
             screen2.classList.add('active');
 
-            // Cambiar estados dinámicamente durante los segundos de escaneo
             let msgIndex = 0;
             const interval = setInterval(() => {
                 msgIndex = (msgIndex + 1) % statusMessages.length;
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
 
-            // Transición exacta tras 6.5 segundos al mapa
+            // Intentar pedir la geolocalización de inmediato para ganar tiempo
+            let userLat = 40.9650; // Fallback Salamanca / centro genérico
+            let userLon = -5.6640;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLat = position.coords.latitude;
+                        userLon = position.coords.longitude;
+                    },
+                    (error) => {
+                        console.log("Usando ubicación por defecto");
+                    },
+                    { timeout: 5000 }
+                );
+            }
+
+            // Tras 6.5 segundos, pasar al mapa real
             setTimeout(() => {
                 clearInterval(interval);
                 screen2.classList.remove('active');
                 screen3.classList.add('active');
+
+                // Inicializar mapa de Leaflet con estilo oscuro CartoDB (estética Dala)
+                if (!map) {
+                    map = L.map('map', {
+                        zoomControl: false,
+                        attributionControl: false
+                    }).setView([userLat, userLon], 16);
+
+                    // Capa de mapa oscuro para encajar con el vacío negro
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                        maxZoom: 19,
+                    }).addTo(map);
+
+                    // Icono personalizado para los quesos en el mapa
+                    const cheeseIcon = L.divIcon({
+                        className: 'custom-cheese-marker',
+                        html: '<div style="font-size: 26px; filter: drop-shadow(0 0 10px rgba(255, 184, 41, 0.7));">🧀</div>',
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    });
+
+                    // Mensajes de broma para los nodos de queso cercanos
+                    const messages = [
+                        "Concentración sospechosa de Cheddar envejecido muy cerca de ti.",
+                        "Alerta máxima: Queso fresco sin sellar detectado en este edificio.",
+                        "Señal débil de Mozzarella. Posible rastro de pizza reciente.",
+                        "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales."
+                    ];
+
+                    // Añadir varios quesos aleatorios alrededor de la posición real (desplazamientos pequeños)
+                    const offsets = [
+                        { lat: 0.0012, lon: 0.0010, msg: 0 },
+                        { lat: -0.0015, lon: -0.0012, msg: 1 },
+                        { lat: 0.0008, lon: -0.0018, msg: 2 },
+                        { lat: -0.0010, lon: 0.0015, msg: 3 }
+                    ];
+
+                    offsets.forEach(offset => {
+                        const marker = L.marker([userLat + offset.lat, userLon + offset.lon], { icon: cheeseIcon }).addTo(map);
+                        marker.on('click', () => {
+                            cheeseText.textContent = messages[offset.msg];
+                            cheeseModal.style.display = 'block';
+                        });
+                    });
+
+                    // Punto central de la víctima (usuario)
+                    const userIcon = L.divIcon({
+                        className: 'user-marker',
+                        html: '<div style="width: 14px; height: 14px; background-color: #8052ff; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 15px #8052ff;"></div>',
+                        iconSize: [14, 14],
+                        iconAnchor: [7, 7]
+                    });
+                    L.marker([userLat, userLon], { icon: userIcon }).addTo(map);
+                } else {
+                    map.invalidateSize();
+                }
             }, 6500);
-        });
-
-        const cheeseMessages = {
-            "1": "Concentración sospechosa de Cheddar envejecido. Posible olor a pies o queso fuerte muy cerca.",
-            "2": "Alerta máxima: Queso fresco sin sellar detectado en la zona.",
-            "3": "Señal débil de Mozzarella. Posible rastro de pizza reciente.",
-            "4": "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales."
-        };
-
-        cheesePins.forEach(pin => {
-            pin.addEventListener('click', () => {
-                const id = pin.getAttribute('data-cheese');
-                cheeseText.textContent = cheeseMessages[id] || "Señal genérica de queso detectada.";
-                cheeseModal.style.display = 'block';
-            });
         });
 
         btnCloseModal.addEventListener('click', () => {
