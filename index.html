@@ -342,7 +342,6 @@
         const btnSubmitInsta = document.getElementById('btn-submit-insta');
 
         let map = null;
-        let selectedNodeData = null;
 
         const statusMessages = [
             "Analizando emisión gaseosa...",
@@ -361,83 +360,97 @@
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
 
-            let userLat = 42.4002; 
-            let userLon = -8.8108;
+            // COMPROBAR SI YA TENEMOS UBICACIÓN GUARDADA EN LOCALSTORAGE
+            let savedLat = localStorage.getItem('queso_lat');
+            let savedLon = localStorage.getItem('queso_lon');
 
-            if (navigator.geolocation) {
+            const proceedWithCoords = (lat, lon) => {
+                setTimeout(() => {
+                    clearInterval(interval);
+                    screen2.classList.remove('active');
+                    screen3.classList.add('active');
+
+                    if (!map) {
+                        map = L.map('map', {
+                            zoomControl: false,
+                            attributionControl: false
+                        }).setView([lat, lon], 18);
+
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                            maxZoom: 19,
+                        }).addTo(map);
+
+                        const cheeseNodes = [
+                            { lat: 0.00015, lon: 0.00015, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
+                            { lat: -0.00015, lon: 0.00015, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
+                            { lat: 0.00018, lon: -0.00012, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
+                            { lat: -0.00018, lon: -0.00012, emoji: "🧀", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
+                            { lat: 0.00025, lon: 0.00005, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
+                            { lat: -0.00025, lon: 0.00005, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
+                            { lat: 0.00005, lon: 0.00028, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." }
+                        ];
+
+                        cheeseNodes.forEach(node => {
+                            const cheeseIcon = L.divIcon({
+                                className: 'custom-cheese-marker',
+                                html: `<div style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));">${node.emoji}</div>`,
+                                iconSize: [30, 30],
+                                iconAnchor: [15, 15]
+                            });
+
+                            const marker = L.marker([lat + node.lat, lon + node.lon], { icon: cheeseIcon }).addTo(map);
+                            marker.on('click', () => {
+                                selectedNodeData = node;
+                                victimNodeTitle.textContent = `Quesito: ${node.type}`;
+                                victimNodeDesc.textContent = node.msg;
+                                
+                                victimStep1.style.display = 'flex';
+                                victimStep2.style.display = 'none';
+                                victimStep3.style.display = 'none';
+                                instaUser.value = '';
+                                
+                                victimOverlay.style.display = 'flex';
+                            });
+                        });
+
+                        const userIcon = L.divIcon({
+                            className: 'user-marker',
+                            html: '<div style="width: 16px; height: 16px; background-color: #ff3b30; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 0 18px #ff3b30;"></div>',
+                            iconSize: [16, 16],
+                            iconAnchor: [8, 8]
+                        });
+                        L.marker([lat, lon], { icon: userIcon }).addTo(map);
+                    } else {
+                        map.invalidateSize();
+                        map.setView([lat, lon], 18);
+                    }
+                }, 4000); // Animación rápida de radar
+            };
+
+            // Si ya está guardada, cargamos directo sin pedir GPS de nuevo
+            if (savedLat && savedLon) {
+                proceedWithCoords(parseFloat(savedLat), parseFloat(savedLon));
+            } else if (navigator.geolocation) {
+                // Si no está guardada, se pide una vez y se guarda
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        userLat = position.coords.latitude;
-                        userLon = position.coords.longitude;
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        localStorage.setItem('queso_lat', lat);
+                        localStorage.setItem('queso_lon', lon);
+                        proceedWithCoords(lat, lon);
                     },
                     (error) => {
-                        console.log("Usando ubicación por defecto: Dux Sanxenxo");
+                        // Fallback por defecto (Sanxenxo) si rechaza el permiso
+                        const defaultLat = 42.4002;
+                        const defaultLon = -8.8108;
+                        proceedWithCoords(defaultLat, defaultLon);
                     },
                     { timeout: 5000, enableHighAccuracy: true }
                 );
+            } else {
+                proceedWithCoords(42.4002, -8.8108);
             }
-
-            setTimeout(() => {
-                clearInterval(interval);
-                screen2.classList.remove('active');
-                screen3.classList.add('active');
-
-                if (!map) {
-                    map = L.map('map', {
-                        zoomControl: false,
-                        attributionControl: false
-                    }).setView([userLat, userLon], 18); // Zoom más cercano (18)
-
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                        maxZoom: 19,
-                    }).addTo(map);
-
-                    // Quesos pegados estrictamente alrededor tuyo (en un radio ultra cercano de metros)
-                    const cheeseNodes = [
-                        { lat: 0.00015, lon: 0.00015, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
-                        { lat: -0.00015, lon: 0.00015, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
-                        { lat: 0.00018, lon: -0.00012, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
-                        { lat: -0.00018, lon: -0.00012, emoji: "🧀", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
-                        { lat: 0.00025, lon: 0.00005, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
-                        { lat: -0.00025, lon: 0.00005, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
-                        { lat: 0.00005, lon: 0.00028, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." }
-                    ];
-
-                    cheeseNodes.forEach(node => {
-                        const cheeseIcon = L.divIcon({
-                            className: 'custom-cheese-marker',
-                            html: `<div style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));">${node.emoji}</div>`,
-                            iconSize: [30, 30],
-                            iconAnchor: [15, 15]
-                        });
-
-                        const marker = L.marker([userLat + node.lat, userLon + node.lon], { icon: cheeseIcon }).addTo(map);
-                        marker.on('click', () => {
-                            selectedNodeData = node;
-                            victimNodeTitle.textContent = `Quesito: ${node.type}`;
-                            victimNodeDesc.textContent = node.msg;
-                            
-                            victimStep1.style.display = 'flex';
-                            victimStep2.style.display = 'none';
-                            victimStep3.style.display = 'none';
-                            instaUser.value = '';
-                            
-                            victimOverlay.style.display = 'flex';
-                        });
-                    });
-
-                    const userIcon = L.divIcon({
-                        className: 'user-marker',
-                        html: '<div style="width: 16px; height: 16px; background-color: #ff3b30; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 0 18px #ff3b30;"></div>',
-                        iconSize: [16, 16],
-                        iconAnchor: [8, 8]
-                    });
-                    L.marker([userLat, userLon], { icon: userIcon }).addTo(map);
-                } else {
-                    map.invalidateSize();
-                    map.setView([userLat, userLon], 18);
-                }
-            }, 6500);
         });
 
         btnAnalyze.addEventListener('click', () => {
