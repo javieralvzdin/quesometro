@@ -209,7 +209,6 @@
             box-shadow: 0 0 35px rgba(255, 184, 41, 0.35);
         }
 
-        /* Banner destacado para el Instagram */
         .instagram-prompt-banner {
             background: rgba(128, 82, 255, 0.2);
             border: 2px solid var(--color-electric-iris);
@@ -387,27 +386,21 @@
                     map = L.map('map', {
                         zoomControl: false,
                         attributionControl: false
-                    }).setView([userLat, userLon], 17);
+                    }).setView([userLat, userLon], 18); // Zoom más cercano (18)
 
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                         maxZoom: 19,
                     }).addTo(map);
 
-                    // Coordenadas ajustadas estrictamente hacia tierra firme (Norte y Este) para evitar el mar/playa
+                    // Quesos pegados estrictamente alrededor tuyo (en un radio ultra cercano de metros)
                     const cheeseNodes = [
-                        { lat: 0.0004, lon: 0.0003, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
-                        { lat: 0.0008, lon: 0.0006, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
-                        { lat: 0.0012, lon: 0.0002, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
-                        { lat: 0.0003, lon: 0.0009, emoji: "🫕", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
-                        { lat: 0.0010, lon: 0.0010, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
-                        { lat: 0.0006, lon: 0.0005, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
-                        { lat: 0.0014, lon: 0.0008, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
-                        { lat: 0.0002, lon: 0.0012, emoji: "🫕", type: "Mantequilla Industrial", msg: "Alerta menor: Concentración alta de grasa butírica pura." },
-                        { lat: 0.0011, lon: 0.0003, emoji: "🧀", type: "Gouda Viejo", msg: "Notas cristalizadas de Gouda holandés detectadas por el escáner." },
-                        { lat: 0.0005, lon: 0.0008, emoji: "🧀", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
-                        { lat: 0.0015, lon: 0.0005, emoji: "🧀", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
-                        { lat: 0.0009, lon: 0.0012, emoji: "🫕", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
-                        { lat: 0.0013, lon: 0.0011, emoji: "🧀", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." }
+                        { lat: 0.00015, lon: 0.00015, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
+                        { lat: -0.00015, lon: 0.00015, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
+                        { lat: 0.00018, lon: -0.00012, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
+                        { lat: -0.00018, lon: -0.00012, emoji: "🧀", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
+                        { lat: 0.00025, lon: 0.00005, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
+                        { lat: -0.00025, lon: 0.00005, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
+                        { lat: 0.00005, lon: 0.00028, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." }
                     ];
 
                     cheeseNodes.forEach(node => {
@@ -442,7 +435,7 @@
                     L.marker([userLat, userLon], { icon: userIcon }).addTo(map);
                 } else {
                     map.invalidateSize();
-                    map.setView([userLat, userLon], 17);
+                    map.setView([userLat, userLon], 18);
                 }
             }, 6500);
         });
