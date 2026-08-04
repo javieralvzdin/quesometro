@@ -167,12 +167,36 @@
             width: 100%;
             max-width: 420px;
             background: rgba(18, 18, 18, 0.95);
-            border: 1px solid rgba(128, 82, 255, 0.3);
+            border: 1px solid rgba(255, 184, 41, 0.4);
             border-radius: 28px;
             padding: 36px 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 0 0 30px rgba(255, 184, 41, 0.15);
+        }
+
+        /* Banner llamativo para pasar el móvil */
+        .pass-phone-banner {
+            background: rgba(255, 184, 41, 0.15);
+            border: 2px solid var(--color-saffron-spark);
+            color: var(--color-saffron-spark);
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(255, 184, 41, 0.35);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { transform: scale(1); box-shadow: 0 0 10px rgba(255, 184, 41, 0.2); }
+            to { transform: scale(1.03); box-shadow: 0 0 25px rgba(255, 184, 41, 0.5); }
         }
 
         .insta-input {
@@ -233,8 +257,11 @@
             <div id="victim-step-1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Nodo</div>
                 <h2 id="victim-node-title" style="font-size: 26px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Nodo Interceptado</h2>
-                <p class="body-ultra" id="victim-node-desc" style="font-size: 17px; margin-bottom: 24px;"></p>
-                <div style="font-size: 15px; color: var(--color-saffron-spark); margin-bottom: 22px; font-weight: 600;">👉 Pásale el móvil al quesito</div>
+                <p class="body-ultra" id="victim-node-desc" style="font-size: 17px; margin-bottom: 20px;"></p>
+                
+                <!-- Banner destacado para pasar el móvil -->
+                <div class="pass-phone-banner">📱 Pásale el móvil al quesito 📱</div>
+
                 <button class="btn-violet" id="btn-analyze">Analiza posible quesito</button>
             </div>
 
@@ -331,20 +358,23 @@
                         maxZoom: 19,
                     }).addTo(map);
 
+                    // Lista ampliada con mayor variedad de tipos de queso y emojis representativos
                     const cheeseNodes = [
                         { lat: 0.0004, lon: 0.0003, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
-                        { lat: -0.0005, lon: -0.0004, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
-                        { lat: 0.0007, lon: -0.0005, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
+                        { lat: -0.0005, lon: -0.0004, emoji: "🐐", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
+                        { lat: 0.0007, lon: -0.0005, emoji: "🟦", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
                         { lat: -0.0003, lon: 0.0006, emoji: "🫕", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
-                        { lat: 0.0002, lon: -0.0008, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
-                        { lat: -0.0007, lon: 0.0002, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
-                        { lat: 0.0009, lon: 0.0007, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
+                        { lat: 0.0002, lon: -0.0008, emoji: "🇨🇭", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
+                        { lat: -0.0007, lon: 0.0002, emoji: "🇪🇸", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
+                        { lat: 0.0009, lon: 0.0007, emoji: "🍕", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
                         { lat: -0.0009, lon: -0.0006, emoji: "🧈", type: "Mantequilla Industrial", msg: "Alerta menor: Concentración alta de grasa butírica pura." },
                         { lat: 0.0005, lon: 0.0011, emoji: "🧀", type: "Gouda Viejo", msg: "Notas cristalizadas de Gouda holandés detectadas por el escáner." },
-                        { lat: -0.0011, lon: 0.0005, emoji: "🧀", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
-                        { lat: 0.0012, lon: -0.0003, emoji: "🧀", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
-                        { lat: -0.0002, lon: -0.0012, emoji: "🫕", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
-                        { lat: 0.0010, lon: 0.0013, emoji: "🧀", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." }
+                        { lat: -0.0011, lon: 0.0005, emoji: "🇫🇷", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
+                        { lat: 0.0012, lon: -0.0003, emoji: "🇮🇹", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
+                        { lat: -0.0002, lon: -0.0012, emoji: "🥪", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
+                        { lat: 0.0010, lon: 0.0013, emoji: "🇬🇷", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." },
+                        { lat: -0.0013, lon: -0.0009, emoji: "🧀", type: "Queso Tetilla", msg: "Anomalía cónica láctea típica del norte detectada con alta precisión." },
+                        { lat: 0.0006, lon: -0.0014, emoji: "🔥", type: "Queso Ahumado de San Simón", msg: "Intensa emanación de humo de abedul y pasta compacta." }
                     ];
 
                     cheeseNodes.forEach(node => {
@@ -388,7 +418,6 @@
             victimStep1.style.display = 'none';
             victimStep2.style.display = 'flex';
 
-            // Mensajes estilo trend de TikTok ("quesitos")
             const scanMsgs = [
                 "Analizando cuerpazo lácteo...",
                 "Verificando nivel de cuajada y flow...",
