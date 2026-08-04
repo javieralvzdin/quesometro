@@ -360,7 +360,6 @@
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
 
-            // COMPROBAR SI YA TENEMOS UBICACIÓN GUARDADA EN LOCALSTORAGE
             let savedLat = localStorage.getItem('queso_lat');
             let savedLon = localStorage.getItem('queso_lon');
 
@@ -424,14 +423,12 @@
                         map.invalidateSize();
                         map.setView([lat, lon], 18);
                     }
-                }, 4000); // Animación rápida de radar
+                }, 4000);
             };
 
-            // Si ya está guardada, cargamos directo sin pedir GPS de nuevo
             if (savedLat && savedLon) {
                 proceedWithCoords(parseFloat(savedLat), parseFloat(savedLon));
             } else if (navigator.geolocation) {
-                // Si no está guardada, se pide una vez y se guarda
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude;
@@ -441,15 +438,15 @@
                         proceedWithCoords(lat, lon);
                     },
                     (error) => {
-                        // Fallback por defecto (Sanxenxo) si rechaza el permiso
-                        const defaultLat = 42.4002;
-                        const defaultLon = -8.8108;
+                        // Coordenadas fijas en tierra firme de Sanxenxo (Zona Dux / Puerto Deportivo)
+                        const defaultLat = 42.3982;
+                        const defaultLon = -8.8115;
                         proceedWithCoords(defaultLat, defaultLon);
                     },
                     { timeout: 5000, enableHighAccuracy: true }
                 );
             } else {
-                proceedWithCoords(42.4002, -8.8108);
+                proceedWithCoords(42.3982, -8.8115);
             }
         });
 
