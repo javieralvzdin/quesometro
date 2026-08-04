@@ -199,14 +199,14 @@
         }
 
         .detected-banner {
-            background: linear-gradient(135deg, rgba(255, 184, 41, 0.2), rgba(128, 82, 255, 0.2));
+            background: linear-gradient(135deg, rgba(255, 184, 41, 0.25), rgba(128, 82, 255, 0.25));
             border: 2px solid var(--color-saffron-spark);
             border-radius: 20px;
-            padding: 20px;
+            padding: 22px;
             margin-bottom: 20px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 0 25px rgba(255, 184, 41, 0.25);
+            box-shadow: 0 0 35px rgba(255, 184, 41, 0.35);
         }
 
         .insta-input {
@@ -285,11 +285,13 @@
 
             <div id="victim-step-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
                 <div class="detected-banner">
-                    <div style="font-size: 28px; margin-bottom: 6px;">🧀🔥</div>
-                    <h2 style="font-size: 22px; font-weight: 700; color: var(--color-saffron-spark); text-transform: uppercase; letter-spacing: 0.05em;">¡QUESITO DETECTADO!</h2>
+                    <div style="font-size: 32px; margin-bottom: 8px;">🧀🔥🚨</div>
+                    <h2 style="font-size: 24px; font-weight: 800; color: var(--color-saffron-spark); text-transform: uppercase; letter-spacing: 0.06em;">¡QUESITO DETECTADO!</h2>
                 </div>
                 
-                <p class="body-ultra" style="font-size: 15px; margin-bottom: 16px;">Introduce tu Instagram para oficializar el título:</p>
+                <div style="background: rgba(255, 184, 41, 0.12); border: 1.5px solid var(--color-saffron-spark); color: var(--color-saffron-spark); padding: 12px 16px; border-radius: 16px; font-size: 15px; font-weight: 700; margin-bottom: 18px; text-align: center; width: 100%; box-shadow: 0 0 15px rgba(255, 184, 41, 0.2);">
+                    👉 Introduce tu Instagram para oficializar el título
+                </div>
                 
                 <input type="text" id="insta-user" class="insta-input" placeholder="@tu_usuario_ig" autocomplete="off" autocapitalize="none">
                 
