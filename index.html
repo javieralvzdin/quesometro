@@ -198,7 +198,6 @@
             to { transform: scale(1.03); box-shadow: 0 0 25px rgba(255, 184, 41, 0.5); }
         }
 
-        /* Banner grande de Quesito Detectado */
         .detected-banner {
             background: linear-gradient(135deg, rgba(255, 184, 41, 0.2), rgba(128, 82, 255, 0.2));
             border: 2px solid var(--color-saffron-spark);
@@ -256,7 +255,7 @@
     <!-- PANTALLA 3: MAPA REAL DE UBICACIÓN -->
     <div id="screen-3" class="screen">
         <div class="map-header-overlay">
-            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 8px 18px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3); font-size: 14px;">Red de nodos lácteos desplegada</div>
+            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 8px 18px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3); font-size: 14px;">Red de quesitos desplegada</div>
         </div>
         
         <div id="map"></div>
@@ -266,13 +265,13 @@
     <div id="victim-overlay">
         <div class="victim-card">
             <div id="victim-step-1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Nodo</div>
-                <h2 id="victim-node-title" style="font-size: 26px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Nodo Interceptado</h2>
+                <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Quesito</div>
+                <h2 id="victim-node-title" style="font-size: 26px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Quesito Localizado</h2>
                 <p class="body-ultra" id="victim-node-desc" style="font-size: 17px; margin-bottom: 20px;"></p>
                 
                 <div class="pass-phone-banner">📱 Pásale el móvil al quesito 📱</div>
 
-                <button class="btn-violet" id="btn-analyze">Analiza posible quesito</button>
+                <button class="btn-violet" id="btn-analyze">Analizar quesito</button>
             </div>
 
             <div id="victim-step-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
@@ -281,14 +280,14 @@
                     <div class="radar-sweep"></div>
                     <div style="position: absolute; font-size: 32px;">👤</div>
                 </div>
-                <p class="body-ultra" id="scanning-text" style="font-size: 17px; margin-bottom: 10px;">Analizando cuerpazo lácteo...</p>
+                <p class="body-ultra" id="scanning-text" style="font-size: 17px; margin-bottom: 10px;">Escaneando nivel de quesito...</p>
             </div>
 
             <div id="victim-step-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
                 <div class="detected-banner">
-                    <div style="font-size: 28px; margin-bottom: 6px;">🚨🧀🔥</div>
-                    <h2 style="font-size: 22px; font-weight: 700; color: var(--color-saffron-spark); text-transform: uppercase; letter-spacing: 0.05em;">¡QUESITO SUPREMO DETECTADO!</h2>
-                    <p style="font-size: 14px; color: var(--color-silver-mist); margin-top: 4px;">Nivel de facha y flow lácteo fuera de escala.</p>
+                    <div style="font-size: 28px; margin-bottom: 6px;">🧀🔥</div>
+                    <h2 style="font-size: 22px; font-weight: 700; color: var(--color-saffron-spark); text-transform: uppercase; letter-spacing: 0.05em;">¡QUESITO DETECTADO!</h2>
+                    <p style="font-size: 14px; color: var(--color-silver-mist); margin-top: 4px;">Nivel de flow lácteo confirmado.</p>
                 </div>
                 
                 <p class="body-ultra" style="font-size: 15px; margin-bottom: 16px;">Introduce tu Instagram para oficializar el título:</p>
@@ -374,20 +373,18 @@
 
                     const cheeseNodes = [
                         { lat: 0.0004, lon: 0.0003, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
-                        { lat: -0.0005, lon: -0.0004, emoji: "🐐", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
-                        { lat: 0.0007, lon: -0.0005, emoji: "🟦", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
+                        { lat: -0.0005, lon: -0.0004, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
+                        { lat: 0.0007, lon: -0.0005, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
                         { lat: -0.0003, lon: 0.0006, emoji: "🫕", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
-                        { lat: 0.0002, lon: -0.0008, emoji: "🇨🇭", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
-                        { lat: -0.0007, lon: 0.0002, emoji: "🇪🇸", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
-                        { lat: 0.0009, lon: 0.0007, emoji: "🍕", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
-                        { lat: -0.0009, lon: -0.0006, emoji: "🧈", type: "Mantequilla Industrial", msg: "Alerta menor: Concentración alta de grasa butírica pura." },
+                        { lat: 0.0002, lon: -0.0008, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
+                        { lat: -0.0007, lon: 0.0002, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
+                        { lat: 0.0009, lon: 0.0007, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." },
+                        { lat: -0.0009, lon: -0.0006, emoji: "🫕", type: "Mantequilla Industrial", msg: "Alerta menor: Concentración alta de grasa butírica pura." },
                         { lat: 0.0005, lon: 0.0011, emoji: "🧀", type: "Gouda Viejo", msg: "Notas cristalizadas de Gouda holandés detectadas por el escáner." },
-                        { lat: -0.0011, lon: 0.0005, emoji: "🇫🇷", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
-                        { lat: 0.0012, lon: -0.0003, emoji: "🇮🇹", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
-                        { lat: -0.0002, lon: -0.0012, emoji: "🥪", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
-                        { lat: 0.0010, lon: 0.0013, emoji: "🇬🇷", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." },
-                        { lat: -0.0013, lon: -0.0009, emoji: "🧀", type: "Queso Tetilla", msg: "Anomalía cónica láctea típica del norte detectada con alta precisión." },
-                        { lat: 0.0006, lon: -0.0014, emoji: "🔥", type: "Queso Ahumado de San Simón", msg: "Intensa emanación de humo de abedul y pasta compacta." }
+                        { lat: -0.0011, lon: 0.0005, emoji: "🧀", type: "Brie Cremoso", msg: "Textura blanda detectada. Posible núcleo de Brie francés." },
+                        { lat: 0.0012, lon: -0.0003, emoji: "🧀", type: "Parmesano Reggiano", msg: "Alta densidad de aminoácidos y cristales de calcio." },
+                        { lat: -0.0002, lon: -0.0012, emoji: "🫕", type: "Queso de Untar", msg: "Emisión anómala de crema láctea untable de alta viscosidad." },
+                        { lat: 0.0010, lon: 0.0013, emoji: "🧀", type: "Feta Griego", msg: "Alto contenido de salinidad y leche de oveja detectado." }
                     ];
 
                     cheeseNodes.forEach(node => {
@@ -401,7 +398,7 @@
                         const marker = L.marker([userLat + node.lat, userLon + node.lon], { icon: cheeseIcon }).addTo(map);
                         marker.on('click', () => {
                             selectedNodeData = node;
-                            victimNodeTitle.textContent = `Nodo: ${node.type}`;
+                            victimNodeTitle.textContent = `Quesito: ${node.type}`;
                             victimNodeDesc.textContent = node.msg;
                             
                             victimStep1.style.display = 'flex';
@@ -432,11 +429,9 @@
             victimStep2.style.display = 'flex';
 
             const scanMsgs = [
-                "Analizando cuerpazo lácteo...",
-                "Verificando nivel de cuajada y flow...",
-                "Calculando aerodinámica de quesito...",
-                "Midiendo nivel de carisma y facha...",
-                "Escaneando proporciones de mozzarella suprema..."
+                "Escaneando nivel de quesito...",
+                "Verificando pureza de la cuajada...",
+                "Calculando flow lácteo..."
             ];
 
             let index = 0;
