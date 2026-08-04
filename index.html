@@ -20,7 +20,7 @@
             --color-void: #000000;
             --color-bone-white: #ffffff;
             --color-ash-gray: #9a9a9a;
-            --color-silver-mist: #bdbdbd;
+            --color-silver-mist: #cccccc;
             --color-electric-iris: #8052ff;
             --color-saffron-spark: #ffb829;
             --color-red-alert: #ff3b30;
@@ -50,7 +50,7 @@
         .screen.active { display: flex; }
         
         .label-saffron {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--color-saffron-spark);
             letter-spacing: 0.035em;
@@ -59,7 +59,7 @@
         }
 
         h1.display-title {
-            font-size: clamp(42px, 11vw, 88px);
+            font-size: clamp(44px, 12vw, 88px);
             font-weight: 400;
             letter-spacing: -0.04em;
             line-height: 1.1;
@@ -69,7 +69,7 @@
         }
 
         p.body-ultra {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 200;
             color: var(--color-silver-mist);
             text-align: center;
@@ -81,11 +81,11 @@
         .btn-violet {
             background-color: var(--color-electric-iris);
             color: var(--color-bone-white);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.025em;
-            padding: 16px 32px;
+            padding: 18px 32px;
             border-radius: 24px;
             border: none;
             cursor: pointer;
@@ -149,7 +149,7 @@
             pointer-events: none;
         }
 
-        /* Pantalla de Flujo de Víctima (Overlay a pantalla completa) */
+        /* Pantalla de Flujo de Víctima */
         #victim-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.96);
@@ -159,17 +159,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 32px;
+            padding: 24px;
             text-align: center;
         }
 
         .victim-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             background: rgba(18, 18, 18, 0.95);
             border: 1px solid rgba(128, 82, 255, 0.3);
             border-radius: 28px;
-            padding: 32px 24px;
+            padding: 36px 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -182,7 +182,7 @@
             border-radius: 16px;
             padding: 16px;
             color: var(--color-bone-white);
-            font-size: 16px;
+            font-size: 18px;
             text-align: center;
             margin-bottom: 20px;
             outline: none;
@@ -221,20 +221,20 @@
     <!-- PANTALLA 3: MAPA REAL DE UBICACIÓN -->
     <div id="screen-3" class="screen">
         <div class="map-header-overlay">
-            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 6px 16px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3);">Red de nodos lácteos desplegada</div>
+            <div class="label-saffron" style="background: rgba(0,0,0,0.8); display: inline-block; padding: 8px 18px; border-radius: 9999px; border: 1px solid rgba(128,82,255,0.3); font-size: 14px;">Red de nodos lácteos desplegada</div>
         </div>
         
         <div id="map"></div>
     </div>
 
-    <!-- OVERLAY DE VÍCTIMA (Paso del móvil) -->
+    <!-- OVERLAY DE VÍCTIMA -->
     <div id="victim-overlay">
         <div class="victim-card">
             <div id="victim-step-1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Nodo</div>
-                <h2 id="victim-node-title" style="font-size: 24px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Nodo Interceptado</h2>
-                <p class="body-ultra" id="victim-node-desc" style="font-size: 15px; margin-bottom: 24px;"></p>
-                <div style="font-size: 13px; color: var(--color-saffron-spark); margin-bottom: 20px; font-weight: 600;">👉 Pásale el móvil al quesito</div>
+                <h2 id="victim-node-title" style="font-size: 26px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Nodo Interceptado</h2>
+                <p class="body-ultra" id="victim-node-desc" style="font-size: 17px; margin-bottom: 24px;"></p>
+                <div style="font-size: 15px; color: var(--color-saffron-spark); margin-bottom: 22px; font-weight: 600;">👉 Pásale el móvil al quesito</div>
                 <button class="btn-violet" id="btn-analyze">Analiza posible quesito</button>
             </div>
 
@@ -244,13 +244,13 @@
                     <div class="radar-sweep"></div>
                     <div style="position: absolute; font-size: 32px;">👤</div>
                 </div>
-                <p class="body-ultra" id="scanning-text" style="font-size: 15px; margin-bottom: 10px;">Analizando índice de grasa y carisma del candidato...</p>
+                <p class="body-ultra" id="scanning-text" style="font-size: 17px; margin-bottom: 10px;">Analizando cuerpazo lácteo...</p>
             </div>
 
             <div id="victim-step-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
-                <div class="label-saffron" style="margin-bottom: 12px; color: var(--color-saffron-spark);">¡Exito Absoluto!</div>
-                <h3 style="font-size: 20px; font-weight: 400; margin-bottom: 12px; color: var(--color-bone-white);">Posible quesito reconocido</h3>
-                <p class="body-ultra" style="font-size: 14px; margin-bottom: 20px;">Completa el formulario final para certificar tu categoría láctea:</p>
+                <div class="label-saffron" style="margin-bottom: 12px; color: var(--color-saffron-spark);">¡Nivel Máximo!</div>
+                <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 14px; color: var(--color-bone-white);">Posible quesito reconocido</h3>
+                <p class="body-ultra" style="font-size: 16px; margin-bottom: 22px;">Completa el formulario final para certificar tu categoría de quesito:</p>
                 
                 <input type="text" id="insta-user" class="insta-input" placeholder="@tu_usuario_ig" autocomplete="off" autocapitalize="none">
                 
@@ -300,7 +300,6 @@
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
 
-            // Fallback configurado en Discoteca Dux (Sanxenxo) si falla el GPS
             let userLat = 42.4002; 
             let userLon = -8.8108;
 
@@ -317,7 +316,6 @@
                 );
             }
 
-            // Tras 6.5 segundos, pasar al mapa real
             setTimeout(() => {
                 clearInterval(interval);
                 screen2.classList.remove('active');
@@ -352,9 +350,9 @@
                     cheeseNodes.forEach(node => {
                         const cheeseIcon = L.divIcon({
                             className: 'custom-cheese-marker',
-                            html: `<div style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));">${node.emoji}</div>`,
-                            iconSize: [28, 28],
-                            iconAnchor: [14, 14]
+                            html: `<div style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));">${node.emoji}</div>`,
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
                         });
 
                         const marker = L.marker([userLat + node.lat, userLon + node.lon], { icon: cheeseIcon }).addTo(map);
@@ -363,7 +361,6 @@
                             victimNodeTitle.textContent = `Nodo: ${node.type}`;
                             victimNodeDesc.textContent = node.msg;
                             
-                            // Resetear flujo de víctima
                             victimStep1.style.display = 'flex';
                             victimStep2.style.display = 'none';
                             victimStep3.style.display = 'none';
@@ -387,15 +384,17 @@
             }, 6500);
         });
 
-        // Botón: Analiza posible quesito
         btnAnalyze.addEventListener('click', () => {
             victimStep1.style.display = 'none';
             victimStep2.style.display = 'flex';
 
+            // Mensajes estilo trend de TikTok ("quesitos")
             const scanMsgs = [
-                "Escaneando nivel de colesterol...",
-                "Evaluando pureza láctea...",
-                "Identificando ADN de quesito..."
+                "Analizando cuerpazo lácteo...",
+                "Verificando nivel de cuajada y flow...",
+                "Calculando aerodinámica de quesito...",
+                "Midiendo nivel de carisma y facha...",
+                "Escaneando proporciones de mozzarella suprema..."
             ];
 
             let index = 0;
@@ -408,19 +407,17 @@
                 clearInterval(scanInterval);
                 victimStep2.style.display = 'none';
                 victimStep3.style.display = 'flex';
-            }, 4000);
+            }, 4500);
         });
 
-        // Botón final: Enlace a Instagram con el usuario introducido
         btnSubmitInsta.addEventListener('click', () => {
             let username = instaUser.value.trim();
             if(!username) {
-                username = "quesito_anonimo";
+                username = "quesito_supremo";
             } else if(!username.startsWith('@')) {
                 username = '@' + username;
             }
             
-            // Redirigir a Instagram o abrir enlace
             const cleanUser = username.replace('@', '');
             window.location.href = `https://instagram.com/${cleanUser}`;
         });
