@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icono.png">
     <link rel="manifest" href="manifest.json">
 
-    <!-- Leaflet CSS para el mapa real -->
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
@@ -23,6 +23,7 @@
             --color-silver-mist: #bdbdbd;
             --color-electric-iris: #8052ff;
             --color-saffron-spark: #ffb829;
+            --color-red-alert: #ff3b30;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -178,6 +179,7 @@
             <div class="radar-cheese" style="top: 25%; left: 70%;">🧀</div>
             <div class="radar-cheese" style="top: 75%; left: 35%;">🧀</div>
             <div class="radar-cheese" style="top: 40%; left: 20%;">🧀</div>
+            <div class="radar-cheese" style="top: 60%; left: 75%;">🧀</div>
         </div>
         <p class="body-ultra" id="radar-status">Calibrando sensores de proximidad láctea...</p>
     </div>
@@ -230,9 +232,9 @@
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
 
-            // Intentar pedir la geolocalización de inmediato para ganar tiempo
-            let userLat = 40.9650; // Fallback Salamanca / centro genérico
-            let userLon = -5.6640;
+            // Fallback configurado en Discoteca Dux (Sanxenxo) si falla el GPS
+            let userLat = 42.4002; 
+            let userLon = -8.8108;
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -241,9 +243,9 @@
                         userLon = position.coords.longitude;
                     },
                     (error) => {
-                        console.log("Usando ubicación por defecto");
+                        console.log("Usando ubicación por defecto: Dux Sanxenxo");
                     },
-                    { timeout: 5000 }
+                    { timeout: 5000, enableHighAccuracy: true }
                 );
             }
 
@@ -253,19 +255,19 @@
                 screen2.classList.remove('active');
                 screen3.classList.add('active');
 
-                // Inicializar mapa de Leaflet con estilo oscuro CartoDB (estética Dala)
+                // Inicializar mapa de Leaflet con estilo oscuro CartoDB
                 if (!map) {
                     map = L.map('map', {
                         zoomControl: false,
                         attributionControl: false
-                    }).setView([userLat, userLon], 16);
+                    }).setView([userLat, userLon], 17);
 
-                    // Capa de mapa oscuro para encajar con el vacío negro
+                    // Capa de mapa oscuro
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                         maxZoom: 19,
                     }).addTo(map);
 
-                    // Icono personalizado para los quesos en el mapa
+                    // Icono de queso personalizado
                     const cheeseIcon = L.divIcon({
                         className: 'custom-cheese-marker',
                         html: '<div style="font-size: 26px; filter: drop-shadow(0 0 10px rgba(255, 184, 41, 0.7));">🧀</div>',
@@ -273,20 +275,24 @@
                         iconAnchor: [15, 15]
                     });
 
-                    // Mensajes de broma para los nodos de queso cercanos
+                    // Mensajes de broma
                     const messages = [
-                        "Concentración sospechosa de Cheddar envejecido muy cerca de ti.",
-                        "Alerta máxima: Queso fresco sin sellar detectado en este edificio.",
+                        "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano.",
+                        "Alerta máxima: Queso fresco sin sellar detectado a pocos metros.",
                         "Señal débil de Mozzarella. Posible rastro de pizza reciente.",
-                        "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales."
+                        "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales.",
+                        "Alerta de Emmental: Burbujas de gas lácteo detectadas justo al lado.",
+                        "¡Peligro! Concentración masiva de queso de cabra en este radio exacto."
                     ];
 
-                    // Añadir varios quesos aleatorios alrededor de la posición real (desplazamientos pequeños)
+                    // Varios quesos distribuidos muy cerca de la posición real
                     const offsets = [
-                        { lat: 0.0012, lon: 0.0010, msg: 0 },
-                        { lat: -0.0015, lon: -0.0012, msg: 1 },
-                        { lat: 0.0008, lon: -0.0018, msg: 2 },
-                        { lat: -0.0010, lon: 0.0015, msg: 3 }
+                        { lat: 0.0004, lon: 0.0003, msg: 0 },
+                        { lat: -0.0005, lon: -0.0004, msg: 1 },
+                        { lat: 0.0007, lon: -0.0005, msg: 2 },
+                        { lat: -0.0003, lon: 0.0006, msg: 3 },
+                        { lat: 0.0002, lon: -0.0008, msg: 4 },
+                        { lat: -0.0007, lon: 0.0002, msg: 5 }
                     ];
 
                     offsets.forEach(offset => {
@@ -297,16 +303,17 @@
                         });
                     });
 
-                    // Punto central de la víctima (usuario)
+                    // Punto rojo brillante para la ubicación exacta del usuario
                     const userIcon = L.divIcon({
                         className: 'user-marker',
-                        html: '<div style="width: 14px; height: 14px; background-color: #8052ff; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 15px #8052ff;"></div>',
-                        iconSize: [14, 14],
-                        iconAnchor: [7, 7]
+                        html: '<div style="width: 16px; height: 16px; background-color: #ff3b30; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 0 18px #ff3b30;"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
                     });
                     L.marker([userLat, userLon], { icon: userIcon }).addTo(map);
                 } else {
                     map.invalidateSize();
+                    map.setView([userLat, userLon], 17);
                 }
             }, 6500);
         });
