@@ -13,65 +13,261 @@
     <link rel="manifest" href="manifest.json">
 
     <style>
+        :root {
+            --color-void: #000000;
+            --color-bone-white: #ffffff;
+            --color-ash-gray: #9a9a9a;
+            --color-silver-mist: #bdbdbd;
+            --color-electric-iris: #8052ff;
+            --color-saffron-spark: #ffb829;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; 
-            background-color: #f7ca18; /* Color amarillo queso */
+            width: 100%; height: 100%;
+            background-color: var(--color-void);
+            color: var(--color-bone-white);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            user-select: none; -webkit-user-select: none; 
+            overflow: hidden;
+            user-select: none; -webkit-user-select: none;
         }
-        #app-container {
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; height: 100%; text-align: center;
+
+        .screen {
+            display: none;
+            width: 100%; height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: absolute; top: 0; left: 0;
         }
-        button {
-            padding: 20px 40px; font-size: 24px; font-weight: bold;
-            border-radius: 50px; border: none; background-color: #333;
-            color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+
+        .screen.active { display: flex; }
+        
+        /* Estilos Dala Guide */
+        .label-saffron {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-saffron-spark);
+            letter-spacing: 0.035em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        h1.display-title {
+            font-size: clamp(42px, 11vw, 88px);
+            font-weight: 400;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--color-bone-white);
+        }
+
+        p.body-ultra {
+            font-size: 18px;
+            font-weight: 200;
+            color: var(--color-silver-mist);
+            text-align: center;
+            max-width: 480px;
+            line-height: 1.5;
+            margin-bottom: 36px;
+        }
+
+        .btn-violet {
+            background-color: var(--color-electric-iris);
+            color: var(--color-bone-white);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            padding: 16px 32px;
+            border-radius: 24px;
+            border: none;
             cursor: pointer;
+            box-shadow: none;
+            transition: opacity 0.2s ease;
         }
-        h2 { font-size: 2rem; color: #333; }
-        p { font-size: 1.2rem; color: #333; padding: 0 20px; }
+
+        .btn-violet:active { opacity: 0.8; }
+
+        /* Animación de Radar */
+        .radar-container {
+            position: relative;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            border: 1px solid rgba(128, 82, 255, 0.3);
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(128, 82, 255, 0) 0deg, rgba(128, 82, 255, 0.45) 360deg);
+            animation: spin 2s linear infinite;
+        }
+
+        .radar-dot {
+            position: absolute;
+            width: 8px; height: 8px;
+            background-color: var(--color-saffron-spark);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--color-saffron-spark);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mapa Minimalista */
+        #screen-3 {
+            background: radial-gradient(circle at center, #111111 0%, #000000 100%);
+            position: relative;
+        }
+
+        .map-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .map-header {
+            position: absolute; top: 40px; left: 0; right: 0;
+            text-align: center; z-index: 10;
+            pointer-events: none;
+            padding: 0 20px;
+        }
+
+        .cheese-pin {
+            position: absolute;
+            font-size: 28px;
+            cursor: pointer;
+            animation: floatCheese 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 10px rgba(255, 184, 41, 0.5));
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes floatCheese {
+            from { transform: translate(-50%, -50%) translateY(0px); }
+            to { transform: translate(-50%, -50%) translateY(-6px); }
+        }
+
+        .cheese-modal {
+            position: absolute; bottom: 40px; left: 24px; right: 24px;
+            background: rgba(14, 14, 14, 0.95);
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            display: none;
+            z-index: 20;
+            border: 1px solid rgba(128, 82, 255, 0.25);
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        <!-- Pantalla 1: El cebo -->
-        <div id="pantalla-1">
-            <h1 style="font-size: 3.5rem; margin-bottom: 50px; color: #333;">🧀<br>Quesómetro</h1>
-            <button id="btn-buscar">Buscar en alrededores</button>
+    <!-- PANTALLA 1: INICIO ESTILO DALA -->
+    <div id="screen-1" class="screen active">
+        <div class="label-saffron">Sistema Táctico Activo</div>
+        <h1 class="display-title">QUESÓMETRO</h1>
+        <p class="body-ultra">Detección de espectro lácteo de alta precisión en tiempo real sin calibración previa.</p>
+        <button class="btn-violet" id="btn-start">Iniciar búsqueda</button>
+    </div>
+
+    <!-- PANTALLA 2: RADAR ESCANEANDO (6.5s) -->
+    <div id="screen-2" class="screen">
+        <div class="label-saffron">Buscando frecuencias...</div>
+        <div class="radar-container">
+            <div class="radar-sweep"></div>
+            <div class="radar-dot" style="top: 25%; left: 70%;"></div>
+            <div class="radar-dot" style="top: 75%; left: 35%;"></div>
+        </div>
+        <p class="body-ultra" id="radar-status">Calibrando sensores de proximidad láctea...</p>
+    </div>
+
+    <!-- PANTALLA 3: MAPA MINIMALISTA CON QUESOS -->
+    <div id="screen-3" class="screen">
+        <div class="map-grid"></div>
+        <div class="map-header">
+            <div class="label-saffron">Señales detectadas en el área</div>
+            <p style="font-size: 14px; color: var(--color-ash-gray);">Toca un nodo activo para inspeccionar</p>
         </div>
 
-        <!-- Pantalla 2: La carga -->
-        <div id="pantalla-2" style="display: none;">
-            <h2>Analizando el aire...</h2>
-            <p>(Calibrando sensores)</p>
-        </div>
+        <!-- Pines de queso distribuidos -->
+        <div class="cheese-pin" style="top: 28%; left: 32%;" data-cheese="1">🧀</div>
+        <div class="cheese-pin" style="top: 62%; left: 72%;" data-cheese="2">🧀</div>
+        <div class="cheese-pin" style="top: 48%; left: 52%;" data-cheese="3">🧀</div>
+        <div class="cheese-pin" style="top: 72%; left: 24%;" data-cheese="4">🧀</div>
 
-        <!-- Pantalla 3: El remate -->
-        <div id="pantalla-3" style="display: none;">
-            <h2>Resultados: 0</h2>
-            <p>Hueles a queso, pero no hay queso.</p>
-            <button id="btn-reiniciar" style="margin-top: 20px; font-size: 18px; background-color: #d9534f;">Reiniciar escáner</button>
+        <!-- Modal de reporte -->
+        <div id="cheese-modal" class="cheese-modal">
+            <div class="label-saffron" style="margin-bottom: 8px;">Nodo de Queso Analizado</div>
+            <p id="cheese-text" style="font-size: 18px; color: var(--color-bone-white); margin-bottom: 20px; font-weight: 200;"></p>
+            <button class="btn-violet" id="btn-close-modal" style="width: 100%;">Cerrar reporte</button>
         </div>
     </div>
 
     <script>
-        document.getElementById('btn-buscar').addEventListener('click', () => {
-            document.getElementById('pantalla-1').style.display = 'none';
-            document.getElementById('pantalla-2').style.display = 'block';
+        const btnStart = document.getElementById('btn-start');
+        const screen1 = document.getElementById('screen-1');
+        const screen2 = document.getElementById('screen-2');
+        const screen3 = document.getElementById('screen-3');
+        const radarStatus = document.getElementById('radar-status');
+        const cheesePins = document.querySelectorAll('.cheese-pin');
+        const cheeseModal = document.getElementById('cheese-modal');
+        const cheeseText = document.getElementById('cheese-text');
+        const btnCloseModal = document.getElementById('btn-close-modal');
 
-            // Tarda 4 segundos en saltar la broma
+        const statusMessages = [
+            "Analizando emisión gaseosa...",
+            "Triangulando coordenadas lácteas...",
+            "Detectando concentración de caseína...",
+            "Filtro de lactosa completado..."
+        ];
+
+        btnStart.addEventListener('click', () => {
+            screen1.classList.remove('active');
+            screen2.classList.add('active');
+
+            // Cambiar estados dinámicamente durante los segundos de escaneo
+            let msgIndex = 0;
+            const interval = setInterval(() => {
+                msgIndex = (msgIndex + 1) % statusMessages.length;
+                radarStatus.textContent = statusMessages[msgIndex];
+            }, 1600);
+
+            // Transición exacta tras 6.5 segundos al mapa
             setTimeout(() => {
-                document.getElementById('pantalla-2').style.display = 'none';
-                document.getElementById('pantalla-3').style.display = 'block';
-            }, 4000);
+                clearInterval(interval);
+                screen2.classList.remove('active');
+                screen3.classList.add('active');
+            }, 6500);
         });
 
-        document.getElementById('btn-reiniciar').addEventListener('click', () => {
-            document.getElementById('pantalla-3').style.display = 'none';
-            document.getElementById('pantalla-1').style.display = 'block';
+        const cheeseMessages = {
+            "1": "Concentración sospechosa de Cheddar envejecido. Posible olor a pies o queso fuerte muy cerca.",
+            "2": "Alerta máxima: Queso fresco sin sellar detectado en la zona.",
+            "3": "Señal débil de Mozzarella. Posible rastro de pizza reciente.",
+            "4": "¡Atención! Este nodo emite una cantidad anómala de aroma a Cabrales."
+        };
+
+        cheesePins.forEach(pin => {
+            pin.addEventListener('click', () => {
+                const id = pin.getAttribute('data-cheese');
+                cheeseText.textContent = cheeseMessages[id] || "Señal genérica de queso detectada.";
+                cheeseModal.style.display = 'block';
+            });
+        });
+
+        btnCloseModal.addEventListener('click', () => {
+            cheeseModal.style.display = 'none';
         });
     </script>
 </body>
