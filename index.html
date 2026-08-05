@@ -218,7 +218,6 @@
             width: 100%; 
             height: 100%;
             object-fit: cover;
-            /* Efecto espejo para que se vea natural */
             transform: scaleX(-1);
         }
 
@@ -238,7 +237,6 @@
             100% { top: calc(100% - 3px); opacity: 0.5; }
         }
 
-        /* Resto de estilos */
         .detected-banner {
             background: linear-gradient(135deg, rgba(255, 184, 41, 0.25), rgba(128, 82, 255, 0.25));
             border: 2px solid var(--color-saffron-spark);
@@ -336,16 +334,14 @@
                 <button class="btn-violet" id="btn-analyze">Analizar quesito</button>
             </div>
 
-            <!-- PASO 2: CÁMARA (NUEVO ESCÁNER FACIAL) -->
+            <!-- PASO 2: CÁMARA -->
             <div id="victim-step-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
                 <div class="label-saffron" style="margin-bottom: 16px;">Escáner Biométrico</div>
                 
                 <div class="camera-container">
-                    <!-- Playsinline es vital para que en iOS no se abra en pantalla completa -->
                     <video id="camera-feed" autoplay playsinline muted></video>
                     <div class="scanner-line" id="scanner-line" style="display: none;"></div>
                     
-                    <!-- Fallback por si no da permiso a la cámara -->
                     <div id="camera-fallback" style="display: none; position: absolute; font-size: 45px; opacity: 0.5;">👤</div>
                 </div>
 
@@ -400,7 +396,8 @@
             "Filtro de lactosa completado..."
         ];
 
-        btnStart.addEventListener('click', () => {
+        // Lo hacemos ASYNC para poder pedir el permiso de cámara sin bloquear la pantalla
+        btnStart.addEventListener('click', async () => {
             screen1.classList.remove('active');
             screen2.classList.add('active');
 
@@ -409,6 +406,16 @@
                 msgIndex = (msgIndex + 1) % statusMessages.length;
                 radarStatus.textContent = statusMessages[msgIndex];
             }, 1600);
+
+            // TRUCO MAESTRO: Pedimos la cámara AHORA MISMO (al dueño del móvil). 
+            // Si salta el aviso, lo aceptas tú. Luego la apagamos rápido.
+            // Así a la víctima no le saldrá el aviso cuando le dé a analizar.
+            try {
+                const tempStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+                tempStream.getTracks().forEach(track => track.stop()); // La apagamos al instante
+            } catch (err) {
+                console.log("Pre-permiso denegado o ignorado.");
+            }
 
             let savedLat = localStorage.getItem('queso_lat');
             let savedLon = localStorage.getItem('queso_lon');
@@ -498,7 +505,7 @@
             }
         });
 
-        // NUEVO FLUJO DE CÁMARA
+        // FLUJO DE CÁMARA PARA LA VÍCTIMA
         btnAnalyze.addEventListener('click', async () => {
             victimStep1.style.display = 'none';
             victimStep2.style.display = 'flex';
@@ -508,7 +515,6 @@
             const scannerLine = document.getElementById('scanner-line');
             let stream = null;
 
-            // Frases graciosas para la cámara
             const scanMsgs = [
                 "Escaneando ojitos de quesito...",
                 "Analizando carita de ángel...",
@@ -517,10 +523,10 @@
                 "Verificando pureza de la cuajada..."
             ];
 
-            scanningText.textContent = "Solicitando permisos de escáner...";
+            scanningText.textContent = "Conectando sensores ópticos...";
 
             try {
-                // Pedimos acceso a la cámara frontal
+                // Como el dueño ya aceptó el permiso en el paso 1, esto cargará al instante sin aviso molesto.
                 stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: "user" },
                     audio: false
@@ -529,11 +535,10 @@
                 videoEl.style.display = 'block';
                 fallbackEl.style.display = 'none';
                 videoEl.srcObject = stream;
-                scannerLine.style.display = 'block'; // Mostramos el láser
+                scannerLine.style.display = 'block'; 
                 
             } catch (err) {
                 console.log("Cámara denegada o sin acceso:", err);
-                // Si rechazan, ponemos el muñeco genérico y hacemos la animación igual
                 videoEl.style.display = 'none';
                 fallbackEl.style.display = 'flex';
                 scannerLine.style.display = 'block';
@@ -545,11 +550,9 @@
                 index = (index + 1) % scanMsgs.length;
             }, 1400);
 
-            // Después de 7 segundos, pasamos al paso final y APAGAMOS la cámara
             setTimeout(() => {
                 clearInterval(scanInterval);
                 
-                // Apagamos los tracks de la cámara para que no gaste batería ni salga luz verde
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                 }
