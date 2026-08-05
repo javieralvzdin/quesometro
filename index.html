@@ -198,6 +198,47 @@
             to { transform: scale(1.03); box-shadow: 0 0 25px rgba(255, 184, 41, 0.5); }
         }
 
+        /* Estilos Escáner Cámara Frontal */
+        .camera-container {
+            position: relative;
+            width: 180px; 
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--color-electric-iris);
+            margin-bottom: 24px;
+            box-shadow: 0 0 25px rgba(128,82,255,0.4);
+            background-color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #camera-feed {
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            /* Efecto espejo para que se vea natural */
+            transform: scaleX(-1);
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: var(--color-saffron-spark);
+            box-shadow: 0 0 15px var(--color-saffron-spark), 0 0 30px var(--color-saffron-spark);
+            animation: scanLineAnim 2.5s ease-in-out infinite alternate;
+            z-index: 10;
+        }
+
+        @keyframes scanLineAnim {
+            0% { top: 0%; opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { top: calc(100% - 3px); opacity: 0.5; }
+        }
+
+        /* Resto de estilos */
         .detected-banner {
             background: linear-gradient(135deg, rgba(255, 184, 41, 0.25), rgba(128, 82, 255, 0.25));
             border: 2px solid var(--color-saffron-spark);
@@ -284,6 +325,7 @@
     <!-- OVERLAY DE VÍCTIMA -->
     <div id="victim-overlay">
         <div class="victim-card">
+            <!-- PASO 1: AVISO -->
             <div id="victim-step-1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="label-saffron" style="margin-bottom: 12px;">Alerta de Quesito</div>
                 <h2 id="victim-node-title" style="font-size: 26px; font-weight: 400; margin-bottom: 16px; color: var(--color-bone-white);">Quesito Localizado</h2>
@@ -294,15 +336,23 @@
                 <button class="btn-violet" id="btn-analyze">Analizar quesito</button>
             </div>
 
+            <!-- PASO 2: CÁMARA (NUEVO ESCÁNER FACIAL) -->
             <div id="victim-step-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
                 <div class="label-saffron" style="margin-bottom: 16px;">Escáner Biométrico</div>
-                <div class="radar-container" style="width: 140px; height: 140px; margin-bottom: 24px;">
-                    <div class="radar-sweep"></div>
-                    <div style="position: absolute; font-size: 32px;">👤</div>
+                
+                <div class="camera-container">
+                    <!-- Playsinline es vital para que en iOS no se abra en pantalla completa -->
+                    <video id="camera-feed" autoplay playsinline muted></video>
+                    <div class="scanner-line" id="scanner-line" style="display: none;"></div>
+                    
+                    <!-- Fallback por si no da permiso a la cámara -->
+                    <div id="camera-fallback" style="display: none; position: absolute; font-size: 45px; opacity: 0.5;">👤</div>
                 </div>
-                <p class="body-ultra" id="scanning-text" style="font-size: 17px; margin-bottom: 10px;">Escaneando nivel de quesito...</p>
+
+                <p class="body-ultra" id="scanning-text" style="font-size: 17px; margin-bottom: 10px; font-weight: 600; color: var(--color-saffron-spark);">Iniciando sensores ópticos...</p>
             </div>
 
+            <!-- PASO 3: CONFIRMACIÓN E INSTAGRAM -->
             <div id="victim-step-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
                 <div class="detected-banner">
                     <div style="font-size: 32px; margin-bottom: 8px;">🧀🔥🚨</div>
@@ -383,7 +433,7 @@
                             { lat: 0.00015, lon: 0.00015, emoji: "🧀", type: "Cheddar Añejo", msg: "Concentración sospechosa de Cheddar envejecido en este establecimiento cercano." },
                             { lat: -0.00015, lon: 0.00015, emoji: "🧀", type: "Queso de Cabra", msg: "Alerta máxima: Queso de cabra artesano detectado a pocos metros." },
                             { lat: 0.00018, lon: -0.00012, emoji: "🧀", type: "Roquefort Azul", msg: "Señal intensa de Roquefort. Emisión de esporas de penicillium detectada." },
-                            { lat: -0.00018, lon: -0.00012, emoji: "🧀", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
+                            { lat: -0.00018, lon: -0.00012, emoji: "🫕", type: "Provolone Fundido", msg: "¡Alerta de alta temperatura! Provolone fundido o fondue en las inmediaciones." },
                             { lat: 0.00025, lon: 0.00005, emoji: "🧀", type: "Emmental Suizo", msg: "Burbujas de gas lácteo características del Emmental suizo." },
                             { lat: -0.00025, lon: 0.00005, emoji: "🧀", type: "Manchego Curado", msg: "Señal de denominación de origen protegida: Manchego gran reserva." },
                             { lat: 0.00005, lon: 0.00028, emoji: "🧀", type: "Mozzarella Fresca", msg: "Rastro lácteo fluido de Mozzarella de búfala pura." }
@@ -399,7 +449,6 @@
 
                             const marker = L.marker([lat + node.lat, lon + node.lon], { icon: cheeseIcon }).addTo(map);
                             marker.on('click', () => {
-                                selectedNodeData = node;
                                 victimNodeTitle.textContent = `Quesito: ${node.type}`;
                                 victimNodeDesc.textContent = node.msg;
                                 
@@ -438,7 +487,6 @@
                         proceedWithCoords(lat, lon);
                     },
                     (error) => {
-                        // Coordenadas fijas en tierra firme de Sanxenxo (Zona Dux / Puerto Deportivo)
                         const defaultLat = 42.3982;
                         const defaultLon = -8.8115;
                         proceedWithCoords(defaultLat, defaultLon);
@@ -450,27 +498,66 @@
             }
         });
 
-        btnAnalyze.addEventListener('click', () => {
+        // NUEVO FLUJO DE CÁMARA
+        btnAnalyze.addEventListener('click', async () => {
             victimStep1.style.display = 'none';
             victimStep2.style.display = 'flex';
 
+            const videoEl = document.getElementById('camera-feed');
+            const fallbackEl = document.getElementById('camera-fallback');
+            const scannerLine = document.getElementById('scanner-line');
+            let stream = null;
+
+            // Frases graciosas para la cámara
             const scanMsgs = [
-                "Escaneando nivel de quesito...",
-                "Verificando pureza de la cuajada...",
-                "Calculando flow lácteo..."
+                "Escaneando ojitos de quesito...",
+                "Analizando carita de ángel...",
+                "Midiendo la simetría de esos labios...",
+                "Comprobando nivel de flow lácteo...",
+                "Verificando pureza de la cuajada..."
             ];
+
+            scanningText.textContent = "Solicitando permisos de escáner...";
+
+            try {
+                // Pedimos acceso a la cámara frontal
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" },
+                    audio: false
+                });
+                
+                videoEl.style.display = 'block';
+                fallbackEl.style.display = 'none';
+                videoEl.srcObject = stream;
+                scannerLine.style.display = 'block'; // Mostramos el láser
+                
+            } catch (err) {
+                console.log("Cámara denegada o sin acceso:", err);
+                // Si rechazan, ponemos el muñeco genérico y hacemos la animación igual
+                videoEl.style.display = 'none';
+                fallbackEl.style.display = 'flex';
+                scannerLine.style.display = 'block';
+            }
 
             let index = 0;
             const scanInterval = setInterval(() => {
-                index = (index + 1) % scanMsgs.length;
                 scanningText.textContent = scanMsgs[index];
-            }, 1200);
+                index = (index + 1) % scanMsgs.length;
+            }, 1400);
 
+            // Después de 7 segundos, pasamos al paso final y APAGAMOS la cámara
             setTimeout(() => {
                 clearInterval(scanInterval);
+                
+                // Apagamos los tracks de la cámara para que no gaste batería ni salga luz verde
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                scannerLine.style.display = 'none';
                 victimStep2.style.display = 'none';
                 victimStep3.style.display = 'flex';
-            }, 4500);
+            }, 7000);
         });
 
         btnSubmitInsta.addEventListener('click', () => {
