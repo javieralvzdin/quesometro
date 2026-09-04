@@ -119,7 +119,8 @@ export default function Radar({
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, dpr });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
 

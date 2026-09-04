@@ -174,7 +174,7 @@ const GhostFibers = ({
   vignette = 0.8,
   grain = 0.05,
   lightMode = false,
-  dpr = 1,
+  dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
   fps = 60,
   paused = false,
   className = ''
