@@ -134,9 +134,7 @@ function VictimOverlay({ node }) {
                 Alerta de Quesito
               </div>
               <h2 className="victim-title">{node.title}</h2>
-              <p className="body-ultra" style={{ fontSize: 19, marginBottom: 20 }}>
-                {node.desc}
-              </p>
+              <p className="body-ultra victim-desc">{node.desc}</p>
               <div className="pass-phone-banner">📱 Pásale el móvil al quesito 📱</div>
               <GlassSurface
                 width="100%"
