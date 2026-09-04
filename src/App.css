@@ -62,7 +62,7 @@
 }
 
 .display-title {
-  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
+  font-family: 'Bebas Neue', 'Lora', Georgia, serif;
   font-size: clamp(56px, 15vw, 108px);
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -278,7 +278,7 @@
 }
 
 .victim-title {
-  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
+  font-family: 'Bebas Neue', 'Lora', Georgia, serif;
   font-size: 34px;
   font-weight: 400;
   letter-spacing: 0.015em;
@@ -394,7 +394,7 @@
 }
 
 .detected-title {
-  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
+  font-family: 'Bebas Neue', 'Lora', Georgia, serif;
   font-size: 32px;
   font-weight: 400;
   color: var(--color-saffron-spark);
