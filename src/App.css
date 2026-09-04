@@ -1,0 +1,462 @@
+.app-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.app-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .screen.active {
+    animation: screen-fade-in 0.35s ease-out;
+  }
+}
+
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.label-saffron {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-saffron-spark);
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.display-title {
+  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-size: clamp(56px, 15vw, 108px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--color-bone-white);
+}
+
+.body-ultra {
+  font-size: 20px;
+  font-weight: 200;
+  color: var(--color-silver-mist);
+  text-align: center;
+  max-width: 480px;
+  line-height: 1.5;
+  margin-bottom: 36px;
+}
+
+.btn-violet {
+  background-color: var(--color-electric-iris);
+  color: var(--color-bone-white);
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  padding: 18px 32px;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 100ms ease-out, opacity 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px rgba(128, 82, 255, 0.25);
+}
+
+.btn-violet:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  box-shadow: 0 4px 14px rgba(128, 82, 255, 0.25);
+}
+
+.btn-glass {
+  border: 1px solid rgba(128, 82, 255, 0.35);
+}
+
+.btn-glass .glass-surface__content {
+  padding: 0;
+}
+
+.btn-glass .btn-violet {
+  background-color: rgba(128, 82, 255, 0.4);
+  box-shadow: none;
+}
+
+.btn-glass .btn-violet:active {
+  background-color: rgba(128, 82, 255, 0.55);
+  box-shadow: none;
+}
+
+/* Radar (screen 2) */
+.radar-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  overflow: hidden;
+  background-color: var(--color-void);
+}
+
+.radar-container .radar-fx-container {
+  position: absolute;
+  inset: 0;
+}
+
+.radar-cheese {
+  position: absolute;
+  font-size: 18px;
+  animation: pulseCheese 1.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));
+}
+
+@keyframes pulseCheese {
+  from {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Mapa real */
+.screen-map {
+  padding: 0;
+  position: relative;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-void);
+}
+
+/* OpenStreetMap no tiene tiles oscuros gratis: invertimos los tiles claros
+   para lograr el mismo aspecto oscuro sin depender de ninguna API key. */
+.leaflet-map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95) saturate(0.7);
+}
+
+.map-header-overlay {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.map-badge-glass {
+  border: 1px solid rgba(128, 82, 255, 0.35);
+}
+
+.map-badge-glass .glass-surface__content {
+  padding: 0;
+}
+
+.map-header-badge {
+  display: inline-block;
+  padding: 8px 18px;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* Overlay de víctima */
+.victim-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  z-index: 2000;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.victim-overlay.active {
+  display: flex;
+}
+
+.victim-fiber-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.victim-fiber-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 4, 14, 0.35);
+}
+
+.victim-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid rgba(255, 184, 41, 0.4);
+  box-shadow: 0 0 40px rgba(255, 184, 41, 0.15), 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.victim-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(4, 3, 10, 0.55);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.victim-card .glass-surface__content {
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px;
+}
+
+.victim-card-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.victim-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.victim-title {
+  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  margin-bottom: 16px;
+  color: var(--color-bone-white);
+}
+
+.pass-phone-banner {
+  background: rgba(255, 184, 41, 0.15);
+  border: 2px solid var(--color-saffron-spark);
+  color: var(--color-saffron-spark);
+  padding: 14px 20px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 24px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(255, 184, 41, 0.35);
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 184, 41, 0.2);
+  }
+  to {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(255, 184, 41, 0.5);
+  }
+}
+
+/* Escáner cámara frontal */
+.camera-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-electric-iris);
+  margin-bottom: 24px;
+  box-shadow: 0 0 25px rgba(128, 82, 255, 0.4);
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.camera-fallback {
+  position: absolute;
+  font-size: 45px;
+  opacity: 0.5;
+}
+
+.scanner-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--color-saffron-spark);
+  box-shadow: 0 0 15px var(--color-saffron-spark), 0 0 30px var(--color-saffron-spark);
+  animation: scanLineAnim 2.5s ease-in-out infinite alternate;
+  z-index: 10;
+}
+
+@keyframes scanLineAnim {
+  0% {
+    top: 0%;
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 3px);
+    opacity: 0.5;
+  }
+}
+
+.scanning-text {
+  font-size: 17px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--color-saffron-spark);
+}
+
+/* Confirmación e Instagram */
+.detected-banner {
+  background: linear-gradient(135deg, rgba(255, 184, 41, 0.25), rgba(128, 82, 255, 0.25));
+  border: 2px solid var(--color-saffron-spark);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 18px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(255, 184, 41, 0.35);
+}
+
+.detected-emoji {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.detected-title {
+  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--color-saffron-spark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.instagram-prompt-banner {
+  background: rgba(128, 82, 255, 0.2);
+  border: 2px solid var(--color-electric-iris);
+  color: var(--color-bone-white);
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(128, 82, 255, 0.35);
+  animation: pulseGlowInsta 1.5s infinite alternate;
+}
+
+@keyframes pulseGlowInsta {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(128, 82, 255, 0.2);
+  }
+  to {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(128, 82, 255, 0.5);
+  }
+}
+
+.insta-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+  color: var(--color-bone-white);
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.insta-input:focus {
+  border-color: var(--color-electric-iris);
+}
+
+/* Leaflet marker helpers */
+.cheese-marker-icon {
+  font-size: 26px;
+  filter: drop-shadow(0 0 8px rgba(255, 184, 41, 0.8));
+}
+
+.user-marker-icon {
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-red-alert);
+  border: 3px solid var(--color-bone-white);
+  border-radius: 50%;
+  box-shadow: 0 0 18px var(--color-red-alert);
+}
