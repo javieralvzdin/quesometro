@@ -1,4 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import GhostFibers from './effects/GhostFibers';
 import IntroScreen from './components/IntroScreen';
 import RadarScreen from './components/RadarScreen';
@@ -84,6 +86,9 @@ function App() {
       <MapScreen active={screen === 'map'} coords={coords} onNodeClick={handleNodeClick} />
 
       <VictimOverlay node={victimNode} />
+
+      <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
