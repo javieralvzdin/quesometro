@@ -162,7 +162,7 @@
 }
 
 /* Mapa real */
-.screen-map {
+.screen.screen-map {
   padding: 0;
   position: relative;
 }

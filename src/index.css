@@ -21,6 +21,7 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   background-color: var(--color-void);
   color: var(--color-bone-white);
   font: 100%/1.6 'Lora', Georgia, 'Times New Roman', serif;
