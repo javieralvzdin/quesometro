@@ -53,7 +53,7 @@
 }
 
 .label-saffron {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-saffron-spark);
   letter-spacing: 0.035em;
@@ -62,7 +62,7 @@
 }
 
 .display-title {
-  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
   font-size: clamp(56px, 15vw, 108px);
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -73,8 +73,8 @@
 }
 
 .body-ultra {
-  font-size: 20px;
-  font-weight: 200;
+  font-size: 22px;
+  font-weight: 400;
   color: var(--color-silver-mist);
   text-align: center;
   max-width: 480px;
@@ -85,8 +85,8 @@
 .btn-violet {
   background-color: var(--color-electric-iris);
   color: var(--color-bone-white);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.025em;
   padding: 18px 32px;
@@ -199,7 +199,7 @@
 .map-header-badge {
   display: inline-block;
   padding: 8px 18px;
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 0;
 }
 
@@ -278,7 +278,7 @@
 }
 
 .victim-title {
-  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
   font-size: 34px;
   font-weight: 400;
   letter-spacing: 0.015em;
@@ -292,7 +292,7 @@
   color: var(--color-saffron-spark);
   padding: 14px 20px;
   border-radius: 18px;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -370,7 +370,7 @@
 }
 
 .scanning-text {
-  font-size: 17px;
+  font-size: 18px;
   margin-bottom: 10px;
   font-weight: 600;
   color: var(--color-saffron-spark);
@@ -394,7 +394,7 @@
 }
 
 .detected-title {
-  font-family: 'Niagara Solid', 'Inter', -apple-system, sans-serif;
+  font-family: 'Niagara Solid', 'Californian FB', Georgia, serif;
   font-size: 32px;
   font-weight: 400;
   color: var(--color-saffron-spark);
@@ -408,7 +408,7 @@
   color: var(--color-bone-white);
   padding: 14px 18px;
   border-radius: 18px;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   margin-bottom: 20px;
   text-align: center;
