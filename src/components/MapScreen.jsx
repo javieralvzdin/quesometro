@@ -1,6 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import GlassSurface from '../effects/GlassSurface';
+
+const FALLBACK_LAT = 40.9701;
+const FALLBACK_LON = -5.6635;
 
 const CHEESE_NODES = [
   {
@@ -74,9 +77,41 @@ function randomScatteredNodes(count) {
   return nodes;
 }
 
-function MapScreen({ active, coords, onNodeClick }) {
+function MapScreen({ active, onNodeClick }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [coords, setCoords] = useState(null);
+
+  useEffect(() => {
+    if (!active) return;
+
+    // Invalidamos cualquier ubicación previa (p.ej. de una apertura anterior
+    // del mapa) para no renderizar nunca con una posición obsoleta mientras
+    // llega la nueva.
+    setCoords(null);
+
+    let cancelled = false;
+    const useFallback = () => {
+      if (!cancelled) setCoords({ lat: FALLBACK_LAT, lon: FALLBACK_LON });
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          if (cancelled) return;
+          setCoords({ lat: position.coords.latitude, lon: position.coords.longitude });
+        },
+        useFallback,
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    } else {
+      useFallback();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [active]);
 
   useEffect(() => {
     if (!active || !coords || !mapContainerRef.current) return;

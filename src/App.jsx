@@ -8,12 +8,8 @@ import MapScreen from './components/MapScreen';
 import VictimOverlay from './components/VictimOverlay';
 import './App.css';
 
-const DEFAULT_LAT = 42.3982;
-const DEFAULT_LON = -8.8115;
-
 function App() {
   const [screen, setScreen] = useState('intro');
-  const [coords, setCoords] = useState(null);
   const [victimNode, setVictimNode] = useState(null);
   const proceedTimerRef = useRef(null);
 
@@ -33,33 +29,11 @@ function App() {
       console.log('Pre-permiso denegado o ignorado.');
     }
 
-    const savedLat = localStorage.getItem('queso_lat');
-    const savedLon = localStorage.getItem('queso_lon');
-
-    const proceedWithCoords = (lat, lon) => {
-      proceedTimerRef.current = setTimeout(() => {
-        setCoords({ lat, lon });
-        setScreen('map');
-      }, 4000);
-    };
-
-    if (savedLat && savedLon) {
-      proceedWithCoords(parseFloat(savedLat), parseFloat(savedLon));
-    } else if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          localStorage.setItem('queso_lat', lat);
-          localStorage.setItem('queso_lon', lon);
-          proceedWithCoords(lat, lon);
-        },
-        () => proceedWithCoords(DEFAULT_LAT, DEFAULT_LON),
-        { timeout: 5000, enableHighAccuracy: true }
-      );
-    } else {
-      proceedWithCoords(DEFAULT_LAT, DEFAULT_LON);
-    }
+    // La ubicación GPS se pide en tiempo real dentro de MapScreen al activarse,
+    // no aquí, para no quedarnos con una posición vieja pegada de esta pantalla.
+    proceedTimerRef.current = setTimeout(() => {
+      setScreen('map');
+    }, 4000);
   }, []);
 
   const handleNodeClick = useCallback(node => {
@@ -83,7 +57,7 @@ function App() {
 
       <IntroScreen active={screen === 'intro'} onStart={handleStart} />
       <RadarScreen active={screen === 'radar'} />
-      <MapScreen active={screen === 'map'} coords={coords} onNodeClick={handleNodeClick} />
+      <MapScreen active={screen === 'map'} onNodeClick={handleNodeClick} />
 
       <VictimOverlay node={victimNode} />
 
